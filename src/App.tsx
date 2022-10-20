@@ -1,11 +1,18 @@
 import React from "react";
-import Counter from "./features/counter/Counter";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import Calendar from "./features/calendar/calendar";
+
+const queryClient = new QueryClient();
 
 function App(): JSX.Element {
   return (
-    <div className="App">
-      <Counter />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+        <Calendar></Calendar>
+      </div>
+    </QueryClientProvider>
   );
 }
 

@@ -1,57 +1,48 @@
-# React, Typescript, Tailwindcss, Redux Toolkit, eslint with Vite
+# React, Typescript, Tailwindcss, Redux Toolkit, eslint, headlessui, HeroIcons, React-query, Date-FNS with Vite
 
-This is a [React](https://reactjs.org) + [TypeScript](https://www.typescriptlang.org/) + [Tailwind](https://tailwindcss.com/) + [RTK](https://redux-toolkit.js.org/) + [eslint](https://eslint.org/) boilerplate built with [Vite](https://vitejs.dev).
+This is a [React](https://reactjs.org) + [TypeScript](https://www.typescriptlang.org/) + [Tailwind](https://tailwindcss.com/) + [RTK](https://redux-toolkit.js.org/) + [eslint](https://eslint.org/) + [HeadlessUI](https://headlessui.com/) + [HeroIcons](https://heroicons.com/) + [React-query](https://tanstack.com/query/v4) + [Date-fns](https://date-fns.org/) boilerplate built with [Vite](https://vitejs.dev).
 
 ## What's inside?
 
--   [ReactJS](https://reactjs.org)
--   [Vite](https://vitejs.dev)
--   [TypeScript](https://www.typescriptlang.org)
--   [Tailwind](https://tailwindcss.com/)
--   [RTK](https://redux-toolkit.js.org/)
--   [ESLint](https://eslint.org)
+- [ReactJS](https://reactjs.org)
+- [Vite](https://vitejs.dev)
+- [TypeScript](https://www.typescriptlang.org)
+- [Tailwind](https://tailwindcss.com/)
+- [RTK](https://redux-toolkit.js.org/)
+- [ESLint](https://eslint.org)
+- [HeadlessUI](https://headlessui.com/)
+- [HeroIcons](https://heroicons.com/)
+- [React-query](https://tanstack.com/query/v4)
+- [Date-fns](https://date-fns.org/)
 
 ## Getting started
 
 1. Clone the repository.
 
-    ```bash
-    git clone https://github.com/IsaiaPhiliph/vite-reactts-tailwind-rtk-eslint.git
-    ```
+   ```bash
+   git clone https://github.com/felipetonietto/demo-calendar-application.git
+   ```
 
 2. Access the project.
 
-    ```bash
-    cd vite-reactts-tailwind-rtk-eslint
-    ```
+   ```bash
+   cd demo-calendar-application
+   ```
 
-3. Make it your own repository
+3. Install dependencies.
 
-    ```bash
-    rm -rf .git
-    git init
-    ```
+   ```bash
+   npm i
+   ```
 
-4. Install dependencies.
+4. Start the development server.
 
-    ```bash
-    npm i
-    ```
+   ```bash
+   npm run dev
+   ```
 
-5. Start the development server.
+5. Start the mock server.
 
-    ```bash
-    npm run dev
-    ```
-
-6. Build for production.
-
-    ```bash
-    npm run build
-    ```
-
-7. Test your production build.
-
-    ```bash
-    npm run serve
-    ```
+   ```bash
+   npx mock-json-server data.json
+   ```
