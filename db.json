@@ -1,0 +1,42 @@
+{
+  "calendar": {
+    "data": [
+      {
+        "id": 0,
+        "name": "Buy milk",
+        "startDatetime": "2022-10-24T13:00",
+        "endDatetime": "2022-10-24T14:30"
+      },
+      {
+        "id": 1,
+        "name": "Dentist",
+        "startDatetime": "2022-10-24T11:00",
+        "endDatetime": "2022-10-24T11:30"
+      },
+      {
+        "id": 2,
+        "name": "Fix the bike",
+        "startDatetime": "2022-10-25T17:00",
+        "endDatetime": "2022-10-25T18:30"
+      },
+      {
+        "id": 3,
+        "name": "Inflate car tire",
+        "startDatetime": "2022-10-24T17:00",
+        "endDatetime": "2022-10-24T18:30"
+      },
+      {
+        "id": 4,
+        "name": "Charge the phone",
+        "startDatetime": "2022-10-26T13:00",
+        "endDatetime": "2022-10-26T14:30"
+      },
+      {
+        "id": 5,
+        "name": "Wedding",
+        "startDatetime": "2022-05-26T14:00",
+        "endDatetime": "2022-05-26T14:30"
+      }
+    ]
+  }
+}

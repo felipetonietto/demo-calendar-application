@@ -1,15 +1,15 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { Meeting } from "../../types";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  deleteEvent,
   createEvent,
-  loadEvents,
+  deleteEvent,
   editEvent,
+  loadEvents,
 } from "../../store/events";
 
 import { Menu, Transition } from "@headlessui/react";
@@ -21,15 +21,15 @@ import {
   eachDayOfInterval,
   endOfMonth,
   format,
+  getDay,
   isEqual,
   isSameDay,
   isSameMonth,
   isToday,
-  getDay,
+  isValid,
   parse,
   parseISO,
   startOfToday,
-  isValid,
 } from "date-fns";
 
 interface Error {
@@ -97,14 +97,53 @@ export default function Calendar() {
     }));
   }, [selectedDay]);
 
-  const { isLoading, error } = useQuery(["events"], () =>
-    fetch("http://localhost:8000/calendar")
+  const { isLoading, error } = useQuery(["meetings"], () =>
+    fetch("http://localhost:8888/calendar")
       .then((res) => res.json())
       .then((data) => {
         dispatch(loadEvents(data.data));
         return data;
       })
   );
+
+  async function createMeeting(meeting: Meeting) {
+    fetch("http://localhost:8888/calendar", {
+      method: "post",
+      body: JSON.stringify({ data: [...meetings, meeting] }),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const createMutation = useMutation(createMeeting);
+
+  async function deleteMeeting(meeting: Meeting) {
+    fetch(`http://localhost:8888/calendar`, {
+      method: "post",
+      body: JSON.stringify({
+        data: meetings.filter((item) => item.id !== meeting.id),
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const deleteMutation = useMutation(deleteMeeting);
+
+  async function editMeetingMutation(meeting: Meeting) {
+    fetch(`http://localhost:8888/calendar`, {
+      method: "post",
+      body: JSON.stringify({
+        data: meetings.map((item) => {
+          if (item.id === meeting.id) {
+            return meeting;
+          }
+          return item;
+        }),
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const editMutation = useMutation(editMeetingMutation);
 
   const days = eachDayOfInterval({
     start: firstDayCurrentMonth,
@@ -125,8 +164,9 @@ export default function Calendar() {
     isSameDay(parseISO(meeting.startDatetime), selectedDay)
   );
 
-  function cancelMeeting(currentMeetting: Meeting) {
-    dispatch(deleteEvent(currentMeetting.id));
+  function cancelMeeting(currentMeeting: Meeting) {
+    dispatch(deleteEvent(currentMeeting.id));
+    deleteMutation.mutate(currentMeeting);
   }
 
   function onInputChange(value: string, item: string) {
@@ -164,18 +204,19 @@ export default function Calendar() {
         const startDateValid = isValid(startDate);
         const endDateValid = isValid(endDate);
 
-        if (!startDateValid || !endDateValid) {
+        if (!startDateValid || !endDateValid || !selectedMeeting.name.length) {
+          !selectedMeeting.name.length && setErrors({ ...errors, name: true });
           !startDateValid && setErrors({ ...errors, start: true });
           !endDateValid && setErrors({ ...errors, end: true });
         } else {
-          setErrors({ ...errors, start: false, end: false });
-          dispatch(
-            editEvent({
-              ...selectedMeeting,
-              startDatetime: startDate.toISOString(),
-              endDatetime: endDate.toISOString(),
-            })
-          );
+          const meetingObject = {
+            ...selectedMeeting,
+            startDatetime: startDate.toISOString(),
+            endDatetime: endDate.toISOString(),
+          };
+          setErrors({ ...errors, start: false, end: false, name: false });
+          editMutation.mutate(meetingObject);
+          dispatch(editEvent(meetingObject));
           setEditing(false);
         }
       } finally {
@@ -202,18 +243,20 @@ export default function Calendar() {
       const startDateValid = isValid(startDate);
       const endDateValid = isValid(endDate);
 
-      if (!startDateValid || !endDateValid) {
+      if (!startDateValid || !endDateValid || !newMeeting.name.length) {
+        !newMeeting.name.length && setErrors({ ...errors, name: true });
         !startDateValid && setErrors({ ...errors, start: true });
         !endDateValid && setErrors({ ...errors, end: true });
       } else {
-        setErrors({ ...errors, start: false, end: false });
-        dispatch(
-          createEvent({
-            ...newMeeting,
-            startDatetime: startDate.toISOString(),
-            endDatetime: endDate.toISOString(),
-          })
-        );
+        const meetingBody = {
+          ...newMeeting,
+          id: meetings.length,
+          startDatetime: startDate.toISOString(),
+          endDatetime: endDate.toISOString(),
+        };
+        setErrors({ ...errors, start: false, end: false, name: false });
+        createMutation.mutate(meetingBody);
+        dispatch(createEvent(meetingBody));
         setAddingNewMeeting(false);
         setNewMeeting(newMeetingModel);
       }
@@ -221,6 +264,8 @@ export default function Calendar() {
       setLoading(false);
     }
   }
+
+  console.log({ meetings });
 
   return (
     <div className="pt-16">
@@ -531,6 +576,7 @@ function Inputs({
         onChange={(event) => handleInputChange(event.target.value, "name")}
         value={selectedMeeting?.name}
       ></input>
+      {errors.name && <p className="text-red-500">Name is required.</p>}
 
       <div className="flex flex-row text-black-500">
         <div className="flex flex-col">
@@ -580,7 +626,7 @@ function Inputs({
           onClick={() => {
             setEditing(false);
             setNewMeeting(newMeetingModel);
-            setErrors({ ...errors, start: false, end: false });
+            setErrors({ ...errors, start: false, end: false, name: false });
           }}
           className="mt-4 ml-2 space-y-1 text-sm leading-6 px-4 py-5 flex items-start rounded-xl bg-red-200 hover:bg-red-500"
         >
